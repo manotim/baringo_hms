@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Patient Records{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Patient Records</h5>
+                    <a href="{% url 'patient_register' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Register New Patient
+                    </a>
+                </div>
+                <div class="card-body">
+                    <!-- Search Form -->
+                    <form method="get" class="mb-4">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                    {{ form.search_term }}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                {{ form.search_by }}
+                            </div>
+                            <div class="col-md-1">
+                                <button type="submit" class="btn btn-primary w-100">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <!-- Patients Table -->
+                    <div class="table-responsive">
+                        <table class="table table-hover datatable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>MRN</th>
+                                    <th>Name</th>
+                                    <th>Age/Gender</th>
+                                    <th>Phone</th>
+                                    <th>NHIF</th>
+                                    <th>Last Visit</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for patient in patients %}
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-primary">{{ patient.mrn }}</span>
+                                    </td>
+                                    <td>
+                                        <strong>{{ patient.full_name }}</strong>
+                                        <br>
+                                        <small class="text-muted">{{ patient.national_id|default:"No ID" }}</small>
+                                    </td>
+                                    <td>
+                                        {{ patient.age }} yrs / {{ patient.get_gender_display }}
+                                        <br>
+                                        <small>Blood: {{ patient.blood_group }}</small>
+                                    </td>
+                                    <td>{{ patient.phone_number }}</td>
+                                    <td>{{ patient.nhif_number|default:"—" }}</td>
+                                    <td>
+                                        {% if patient.consultation_set.last %}
+                                            {{ patient.consultation_set.last.visit_date|date:"d/m/Y" }}
+                                        {% else %}
+                                            <span class="text-muted">No visits</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'patient_detail' patient.mrn %}" 
+                                               class="btn btn-sm btn-info" title="View">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'patient_edit' patient.mrn %}" 
+                                               class="btn btn-sm btn-warning" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'new_consultation' patient.mrn %}" 
+                                               class="btn btn-sm btn-success" title="New Consultation">
+                                                <i class="fas fa-stethoscope"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted">No patients found</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    {% if page_obj.has_other_pages %}
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search_term %}&search_term={{ request.GET.search_term }}{% endif %}">
+                                    Previous
+                                </a>
+                            </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search_term %}&search_term={{ request.GET.search_term }}{% endif %}">{{ num }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search_term %}&search_term={{ request.GET.search_term }}{% endif %}">
+                                    Next
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

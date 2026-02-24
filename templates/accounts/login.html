@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Login - Baringo HMS{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h4 class="mb-0">
+                        <i class="fas fa-hospital-user me-2"></i>
+                        Baringo County Referral Hospital
+                    </h4>
+                    <p class="mb-0 mt-2">Digital Patient Records Management System</p>
+                </div>
+                
+                <div class="card-body p-5">
+                    <h5 class="text-center mb-4">Login to Your Account</h5>
+                    
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login
+                            </button>
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <a href="#" class="text-muted">Forgot Password?</a>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="card-footer text-center py-3">
+                    <small class="text-muted">
+                        &copy; 2026 Baringo County Government. All rights reserved.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}New Consultation{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-stethoscope me-2"></i>
+                        New Consultation - {{ patient.full_name }} ({{ patient.mrn }})
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Patient Summary -->
+                    <div class="alert alert-info">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Age:</strong> {{ patient.age }} years
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Gender:</strong> {{ patient.get_gender_display }}
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Blood Group:</strong> {{ patient.blood_group }}
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Allergies:</strong> {{ patient.allergies|default:"None"|truncatechars:30 }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h6 class="bg-light p-2">Visit Information</h6>
+                                {{ form.visit_type|as_crispy_field }}
+                                {{ form.visit_date|as_crispy_field }}
+                                {{ form.visit_time|as_crispy_field }}
+                            </div>
+                            <div class="col-md-8">
+                                <h6 class="bg-light p-2">Chief Complaint</h6>
+                                {{ form.chief_complaint|as_crispy_field }}
+                                {{ form.history_presenting_illness|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <h6 class="bg-light p-2 mt-3">Vital Signs</h6>
+                        <div class="row">
+                            <div class="col-md-3">{{ form.temperature|as_crispy_field }}</div>
+                            <div class="col-md-3">{{ form.heart_rate|as_crispy_field }}</div>
+                            <div class="col-md-3">{{ form.respiratory_rate|as_crispy_field }}</div>
+                            <div class="col-md-3">{{ form.oxygen_saturation|as_crispy_field }}</div>
+                            <div class="col-md-3">{{ form.blood_pressure_systolic|as_crispy_field }}</div>
+                            <div class="col-md-3">{{ form.blood_pressure_diastolic|as_crispy_field }}</div>
+                            <div class="col-md-3">{{ form.weight|as_crispy_field }}</div>
+                            <div class="col-md-3">{{ form.height|as_crispy_field }}</div>
+                        </div>
+                        
+                        <h6 class="bg-light p-2 mt-3">Clinical Assessment</h6>
+                        <div class="row">
+                            <div class="col-12">{{ form.physical_examination|as_crispy_field }}</div>
+                            <div class="col-12">{{ form.diagnosis|as_crispy_field }}</div>
+                            <div class="col-12">{{ form.differential_diagnosis|as_crispy_field }}</div>
+                            <div class="col-12">{{ form.treatment_plan|as_crispy_field }}</div>
+                        </div>
+                        
+                        <h6 class="bg-light p-2 mt-3">Follow-up</h6>
+                        <div class="row">
+                            <div class="col-md-6">{{ form.follow_up_date|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.follow_up_notes|as_crispy_field }}</div>
+                        </div>
+                        
+                        {{ form.notes|as_crispy_field }}
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Consultation
+                            </button>
+                            <a href="{% url 'patient_detail' patient.mrn %}" class="btn btn-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
